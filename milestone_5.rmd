@@ -1,0 +1,34 @@
+---
+title: "Milestone 5"
+author: "Miroslav Bergam"
+date: "3/30/2020"
+output: bookdown::pdf_document2
+bibliography: bibliography.bib
+link_citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Importing necessary libaries
+library(gtable)
+library(stargazer)
+library(tidyverse)
+library(gt)
+
+```
+
+
+This is the PDF document of my replication project.
+
+@main_paper @side_paper_1 @side_paper_2 @side_paper_3 @side_paper_4
+
+^[[All analysis for this paper is availible at https://github.com/mirobergam/milestone-5](https://github.com/mirobergam/milestone-5)]
+
+### Overview
+
+### Graphic
+
+### Appendix
+
+### Bibliography
