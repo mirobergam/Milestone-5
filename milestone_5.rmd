@@ -8,13 +8,18 @@ link_citations: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+
+statapath <- "/Applications/Stata/Stata.app"
+knitr::opts_chunk$set(engine="stata", engine.path=statapath, comment="")
 
 # Importing necessary libaries
 library(gtable)
 library(stargazer)
 library(tidyverse)
 library(gt)
+library(RStata)
+library(Statamarkdown)
+
 
 ```
 
@@ -29,6 +34,28 @@ This is the PDF document of my replication project.
 
 ### Graphic
 
+```{r}
+
+```
+
 ### Appendix
 
+```{r}
+
+import delimited C:\Users\mirobergam\Desktop\DataProjects\Milestone-5\hansen_treul_jop_replication_data.csv
+destring geoid2, generate(district)
+xtset district congress
+
+xtreg hrcrating laghrcrating population loghrccontrib democrat demvote lgb, re vce(cluster district)
+xtreg hrcrating laghrcrating mrp loghrccontrib democrat demvote lgb, re vce(cluster district)
+xtreg hrcrating laghrcrating population mrp loghrccontrib democrat demvote lgb, re vce(cluster district)
+xtreg hrcrating laghrcrating c.population##c.mrp loghrccontrib democrat demvote lgb, re vce(cluster district)
+
+#Marginal effects of population given district opinion - Figure 1
+margins, dydx(population) at(mrp=(10(5)70) democrat=(1)) atmeans
+marginsplot, recast(line) recastci(rarea) yline(0)
+
+```
+
 ### Bibliography
+

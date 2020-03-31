@@ -1,0 +1,53 @@
+#############
+#############
+#Replication Code for Reported Models in
+#"The Symbolic and Substantive Representation of LGB Americans in the U.S. House"
+#Eric Hansen/ehansen@live.unc.edu
+#Sarah Treul/streul@email.unc.edu
+#############
+#############
+
+import delimited C:\Users\Eric\Dropbox\LGB\masterdataset.csv
+destring geoid2, generate(district)
+xtset district congress
+
+###############################
+#OLS Models - Table 1
+###############################
+
+xtreg hrcrating laghrcrating population loghrccontrib democrat demvote lgb, re vce(cluster district)
+xtreg hrcrating laghrcrating mrp loghrccontrib democrat demvote lgb, re vce(cluster district)
+xtreg hrcrating laghrcrating population mrp loghrccontrib democrat demvote lgb, re vce(cluster district)
+xtreg hrcrating laghrcrating c.population##c.mrp loghrccontrib democrat demvote lgb, re vce(cluster district)
+
+#Marginal effects of population given district opinion - Figure 1
+margins, dydx(population) at(mrp=(10(5)70) democrat=(1)) atmeans
+marginsplot, recast(line) recastci(rarea) yline(0)
+
+###################
+#Logit Models - Table 2
+###################
+
+logit caucus population loghrccontrib democrat demvote
+logit caucus mrp loghrccontrib democrat demvote
+logit caucus population mrp loghrccontrib democrat demvote
+logit caucus c.population##c.mrp loghrccontrib democrat demvote
+estat ic
+
+#Predicted probability plot - Figure 2
+margins, at(population=(0(.5)3) mrp=(35 50 65) democrat=(1)) atmeans vsquish post
+marginsplot
+
+###############################
+#Count Models - Table 3
+###############################
+
+nbreg sponsor lagsponsor population loghrccontrib democrat demvote lgb i.congress, vce(cluster district)
+nbreg sponsor lagsponsor mrp loghrccontrib democrat demvote lgb i.congress, vce(cluster district)
+nbreg sponsor lagsponsor population mrp loghrccontrib democrat demvote lgb i.congress, vce(cluster district)
+nbreg sponsor lagsponsor c.population##c.mrp loghrccontrib democrat demvote lgb i.congress, vce(cluster district)
+
+#Predicted count plot - Figure 3
+nbreg sponsor lagsponsor population loghrccontrib democrat demvote lgb i.congress, vce(cluster district)
+margins, at(population=(0(.5)3) lgb=(0 1) democrat=(1)) atmeans vsquish post
+marginsplot, noci
