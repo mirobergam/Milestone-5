@@ -9,8 +9,7 @@ link_citations: true
 
 ```{r setup, include=FALSE}
 
-statapath <- "/Applications/Stata/Stata.app"
-knitr::opts_chunk$set(engine="stata", engine.path=statapath, comment="")
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
 
 # Importing necessary libaries
 library(gtable)
@@ -32,15 +31,76 @@ This is the PDF document of my replication project.
 
 ### Overview
 
+This paper is making the arguement that the number of lesbian, gay, and bisexual
+constituents in a district affects the behavior of their representative in the
+House. It is additionally arguing that the number of individuals in the district
+who support LGB policies like gay marriage have an affect on the
+representative's behavior. They measured this behavior in voting records, bill
+sponsorship/co-sponsorship, and caucus memberships from 2005-2011. The paper
+also utilized metrics like the HRC's rating system, which assigns politicians
+scores based on their LGBT voting record,  and the campaign donations they
+recieve from the HRC. The HRC is the Humans Rights Campaign, a leader in LGBT
+advocacy. The type of decisions that this paper looked at were low cost,
+symbolic LGB policies (as opposed to  high cost, institutional changes). The
+paper used different models to establish coefficients/relationships between
+independent variables like  district opinion, HRC campaign contributions, voting
+record, district partisanship, political party, etc and dependent variables
+(their measures of LGB support) like caucus membership, HRC score, and number of
+sponsorships. The paper finds that the percentage of LGB constituents in a
+district increases support of LGB matters from their representative in the
+House, with a dramatic increase in the likelihood of LGB reps supporting
+pro-LGBT bills and a less noticeable but still present increase in the
+likelihood of non-LGB reps supporting pro-LGBT bills. The general public's
+opinion on LGB matters also affects house members' decisions. The positive
+influence of the LGB population steadily decreases as greater percentages of
+their district show support for LGB matters, specifically same-sex marraige.
+Another figure showed how the LGB population does less to affect a member's
+probability of joining a pro-LGBT caucus if their district already has high
+levels of LGB support. When the house majority's attitudes on the policies are
+more favorable, house members advocate more for these symbolic policies.
+
 ### Graphic
 
 ```{r}
+
+data <- read_csv("hansen_treul_jop_replication_data.csv", col_types = cols(
+  GEO.id = col_character(),
+  GEO.id2 = col_double(),
+  `GEO.display-label` = col_character(),
+  rep = col_character(),
+  congress = col_double(),
+  statecode = col_double(),
+  hrcrating = col_character(),
+  laghrcrating = col_character(),
+  caucus = col_character(),
+  sponsor = col_double(),
+  lagsponsor = col_double(),
+  population = col_double(),
+  mrp = col_character(),
+  hrccontrib = col_double(),
+  loghrccontrib = col_double(),
+  democrat = col_double(),
+  demvote = col_character(),
+  lgb = col_double()
+)) %>%
+  mutate(mrp = as.integer(mrp))
+
+ggplot(data, aes(x = population, y = hrccontrib)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  labs(x = "Percentage of District LGB",
+       y = "Campaign donations from Human Rights Campaign",
+       title = "HRC Campaign Donations by District LGB Population",
+       subtitle = "Representatives with more LGB constituents recieve more HRC campaign support",
+       caption = "This relationship is intuititve, although it also makes sense that many data points do not fit the trend. \n Campaigns and elections are very situational and the HRC may support an individual not extremely supportive of \n LGB policies as they are the 'better of two evils'. Additionally, there are far greater data-points  \n with <1 LGB population, so high variability is expected on the lower spectrum of the x-axis.")
 
 ```
 
 ### Appendix
 
-```{r}
+I used a package called Statamarkdown (https://www.ssc.wisc.edu/~hemken/Stataworkshops/Stata%20and%20R%20Markdown/StataMarkdown) to run the stata code, as the the tables in my paper were very complex and I wasn't sure how to recreate or format them in R (they were meta-analyses of different models the paper created). Unforunately, this was giving me an error that I could not find elsewhere on the internet -- I suspect this package may run on Windows, as the webpage advertises? I considered doing this milestone in a .do file, but I do not know how to do the pdf formatting in stata. My stata code is in this rmarkdown file, it just wouldn't run for the PDF.
+
+```{stata}
 
 import delimited C:\Users\mirobergam\Desktop\DataProjects\Milestone-5\hansen_treul_jop_replication_data.csv
 destring geoid2, generate(district)
